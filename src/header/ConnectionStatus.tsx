@@ -13,8 +13,8 @@ export function ConnectionStatus() {
   const [qrError, setQrError] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [showConnectForm, setShowConnectForm] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('972523323235');
-  const [apiKey, setApiKey] = useState('siuu');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const fetchStatus = async () => {
     setLoading(true);
     try {

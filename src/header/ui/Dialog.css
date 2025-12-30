@@ -34,7 +34,6 @@
   transition: opacity 0.2s;
   display: flex;
   align-items: center;
-  justify-center;
   background: none;
   border: none;
   cursor: pointer;
