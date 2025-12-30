@@ -1,7 +1,7 @@
 import { ConnectionStateResponse } from '../../header/types';
 import { JobTreeResponse } from '../../workspace/current-jobs/types';
 import { Raf0RequestModel, MavdakRequestModel, HakhanaRequestModel, VeadatKevaRequestModel } from '../../workspace/new-actions/types';
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -19,56 +19,65 @@ class ApiService {
   async getConnectionState(): Promise<ConnectionStateResponse> {
     return this.request<ConnectionStateResponse>('/connection/connection_state');
   }
-  async reconnect(): Promise<{
+  async connect(): Promise<{
     qr_code: string;
   }> {
+
+    
+
+    const requestBody = { 
+      number: "972523323235",
+      api_key: "siuu",
+    };
+
+
     const response = await fetch(`${API_BASE_URL}/connection/connect`, {
-      method: 'POST'
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
     });
+    
     if (!response.ok) throw new Error('Failed to reconnect');
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return response.json();
-    } else {
-      const text = await response.text();
-      return {
-        qr_code: text.replace(/"/g, '')
-      };
+
+    try {
+      return { qr_code: (await response.json())['qr_code'] };
+    } catch {
+      return { qr_code: '' };
     }
   }
   async getAllJobs(): Promise<JobTreeResponse> {
-    return this.request<JobTreeResponse>('/jobs/all');
+    return this.request<JobTreeResponse>('/job/get_all_jobs');
   }
   async deleteJobBatch(batchId: string): Promise<void> {
-    await this.request(`/jobs/batch/${encodeURIComponent(batchId)}`, {
+    await this.request(`/job/delete_job_batch?batch_id=${encodeURIComponent(batchId)}`, {
       method: 'DELETE'
     });
   }
   async deleteJob(jobId: string): Promise<void> {
-    await this.request(`/jobs/job/${encodeURIComponent(jobId)}`, {
+    await this.request(`/job/delete_job?job_id=${encodeURIComponent(jobId)}`, {
       method: 'DELETE'
     });
   }
   async createRaf0(data: Raf0RequestModel): Promise<void> {
-    await this.request('/group_creates/raf0', {
+    await this.request('/create_group/raf0', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
   async createMavdak(data: MavdakRequestModel): Promise<void> {
-    await this.request('/group_creates/mavdak', {
+    await this.request('/create_group/mavdak', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
   async createHakhana(data: HakhanaRequestModel): Promise<void> {
-    await this.request('/group_creates/hakhana', {
+    await this.request('/create_group/hakhana', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
   async createVeadatKeva(data: VeadatKevaRequestModel): Promise<void> {
-    await this.request('/group_creates/veadat_keva', {
+    await this.request('/create_group/veadat_keva', {
       method: 'POST',
       body: JSON.stringify(data)
     });

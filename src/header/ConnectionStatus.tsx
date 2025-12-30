@@ -42,12 +42,16 @@ export function ConnectionStatus() {
     try {
       const {
         qr_code
-      } = await api.reconnect();
-      setQrCode(qr_code);
-      setShowQr(true);
-      fetchStatus();
-    } catch (error) {
-      console.error('Failed to reconnect:', error);
+      } = await api.connect();
+
+      if (qr_code === '') {
+        throw new Error('Failed to reconnect');
+      }
+      else{
+        setQrCode(qr_code);
+        setShowQr(true);
+        fetchStatus();
+      }
     } finally {
       setLoading(false);
     }
@@ -117,7 +121,7 @@ export function ConnectionStatus() {
             <DialogTitle>Scan QR Code to Connect</DialogTitle>
           </DialogHeader>
           <div className="flex items-center justify-center p-6 bg-slate-50 rounded-lg">
-            {qrCode ? <img src={`data:image/png;base64,${qrCode}`} alt="WhatsApp Connection QR Code" className="w-64 h-64 object-contain" /> : <div className="flex flex-col items-center gap-2 text-slate-500">
+            {qrCode ? <img src={`${qrCode}`} alt="WhatsApp Connection QR Code" className="w-64 h-64 object-contain" /> : <div className="flex flex-col items-center gap-2 text-slate-500">
                 <RefreshCw className="h-8 w-8 animate-spin" />
                 <p>Generating QR Code...</p>
               </div>}
