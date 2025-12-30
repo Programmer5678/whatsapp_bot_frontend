@@ -19,30 +19,29 @@ class ApiService {
   async getConnectionState(): Promise<ConnectionStateResponse> {
     return this.request<ConnectionStateResponse>('/connection/connection_state');
   }
-  async connect(): Promise<{
+  async connect(number: string, apiKey: string): Promise<{
     qr_code: string;
   }> {
-
-    
-
-    const requestBody = { 
-      number: "972523323235",
-      api_key: "siuu",
+    const requestBody = {
+      number,
+      api_key: apiKey
     };
-
-
     const response = await fetch(`${API_BASE_URL}/connection/connect`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
     });
-    
     if (!response.ok) throw new Error('Failed to reconnect');
-
     try {
-      return { qr_code: (await response.json())['qr_code'] };
+      return {
+        qr_code: (await response.json())['qr_code']
+      };
     } catch {
-      return { qr_code: '' };
+      return {
+        qr_code: ''
+      };
     }
   }
   async getAllJobs(): Promise<JobTreeResponse> {

@@ -1,0 +1,15 @@
+
+.dashboard {
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+}

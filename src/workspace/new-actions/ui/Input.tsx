@@ -1,15 +1,9 @@
-import React, { forwardRef } from 'react';
-import { cn } from '../../../shared/utils/helpers';
-/**
- * Input component - used only in new-actions forms
- */
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-const Input = forwardRef<HTMLInputElement, InputProps>(({
-  className,
-  type,
+import React from 'react';
+import './Input.css';
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export function Input({
+  className = '',
   ...props
-}, ref) => {
-  return <input type={type} className={cn('flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50', className)} ref={ref} {...props} />;
-});
-Input.displayName = 'Input';
-export { Input };
+}: InputProps) {
+  return <input className={`input ${className}`} {...props} />;
+}

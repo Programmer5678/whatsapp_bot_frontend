@@ -12,13 +12,7 @@
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "lucide-react": "0.522.0",
-    "@radix-ui/react-dialog": "^1.1.6",
-    "@radix-ui/react-slot": "latest",
-    "class-variance-authority": "latest",
-    "clsx": "latest",
-    "tailwind-merge": "latest",
-    "@radix-ui/react-label": "^2.1.2"
+    "lucide-react": "0.522.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.18",

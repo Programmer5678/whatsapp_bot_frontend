@@ -1,33 +1,21 @@
-import React, { useState, Children, Component } from 'react';
-import { ChevronRight, ChevronDown, Trash2, Clock, AlertTriangle } from 'lucide-react';
+import React, { useState, Children } from 'react';
+import { ChevronRight, ChevronDown, Trash2, Clock, AlertTriangle, XCircle } from 'lucide-react';
 import { TreeNode } from './utils/jobTree';
 import { Job } from './types';
 import { Button } from '../../shared/ui/Button';
 import { Badge } from './ui/Badge';
-import { cn, formatDate } from '../../shared/utils/helpers';
+import { formatDate } from '../../shared/utils/helpers';
 import { api } from '../../shared/api/client';
+import './JobTree.css';
 interface JobTreeProps {
   nodes: Record<string, TreeNode>;
   onRefresh: () => void;
 }
-/**
- * JobTree Component
- *
- * Displays a hierarchical tree view of automation jobs.
- * Jobs are organized by their ID path (e.g., "mavdaks/2025-12-30/job/1").
- *
- * Features:
- * - Recursive tree rendering
- * - Expand/collapse nodes
- * - Delete batch or individual jobs
- * - View detailed job information
- * - Status badges (PENDING, COMPLETED, FAILED, RUNNING)
- */
 export function JobTree({
   nodes,
   onRefresh
 }: JobTreeProps) {
-  return <div className="space-y-1 pl-2">
+  return <div className="job-tree">
       {Object.values(nodes).map(node => <TreeNodeItem key={node.fullPath} node={node} onRefresh={onRefresh} />)}
     </div>;
 }
@@ -59,13 +47,15 @@ function TreeNodeItem({
       setIsDeleting(false);
     }
   };
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'warning' | 'success' | 'destructive' | 'default' | 'secondary' => {
     switch (status?.toUpperCase()) {
       case 'PENDING':
         return 'warning';
       case 'COMPLETED':
+      case 'SUCCESS':
         return 'success';
       case 'FAILED':
+      case 'FAILURE':
         return 'destructive';
       case 'RUNNING':
         return 'default';
@@ -73,99 +63,119 @@ function TreeNodeItem({
         return 'secondary';
     }
   };
-  return <div className="border-l border-slate-200 ml-2">
-      <div className={cn('group flex items-center gap-2 py-2 px-2 hover:bg-slate-50 rounded-md cursor-pointer transition-colors', node.isJob && 'bg-slate-50/50')} onClick={() => setIsOpen(!isOpen)}>
-        <div className="flex-1 flex items-center gap-2 overflow-hidden">
-          {hasChildren ? isOpen ? <ChevronDown className="h-4 w-4 text-slate-400" /> : <ChevronRight className="h-4 w-4 text-slate-400" /> : <div className="w-4" />}
+  return <div className="job-tree__node">
+      <div className={`job-tree__item ${node.isJob ? 'job-tree__item--job' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+        <div className="job-tree__content">
+          {hasChildren ? isOpen ? <ChevronDown className="job-tree__icon" /> : <ChevronRight className="job-tree__icon" /> : <div style={{
+          width: '1rem'
+        }} />}
 
-          <span className={cn('text-sm truncate', node.isJob ? 'font-medium text-slate-900' : 'text-slate-600')}>
+          <span className={`job-tree__name ${node.isJob ? 'job-tree__name--job' : 'job-tree__name--directory'}`}>
             {node.name}
           </span>
 
-          {node.isJob && node.jobData && <Badge variant={getStatusColor(node.jobData.status)} className="ml-2 text-[10px] h-5">
+          {node.isJob && node.jobData && <Badge variant={getStatusColor(node.jobData.status)} style={{
+          marginLeft: '0.5rem',
+          fontSize: '0.625rem',
+          height: '1.25rem'
+        }}>
               {node.jobData.status}
             </Badge>}
         </div>
 
-        {(node.isBatch || node.isJob) && <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={handleDelete} disabled={isDeleting}>
-            <Trash2 className="h-3.5 w-3.5 text-red-500" />
+        {(node.isBatch || node.isJob) && <Button variant="ghost" size="icon" className="job-tree__delete" onClick={handleDelete} disabled={isDeleting} style={{
+        width: '1.5rem',
+        height: '1.5rem'
+      }}>
+            <Trash2 size={14} style={{
+          color: 'var(--error)'
+        }} />
           </Button>}
       </div>
 
-      {isOpen && <div className="animate-in slide-in-from-top-2 duration-200">
+      {isOpen && <div className="job-tree__children">
           {node.isJob && node.jobData && <JobDetails job={node.jobData} />}
 
-          {hasChildren && <div className="ml-2">
+          {hasChildren && <div style={{
+        marginLeft: '0.5rem'
+      }}>
               <JobTree nodes={node.children} onRefresh={onRefresh} />
             </div>}
         </div>}
     </div>;
 }
-/**
- * JobDetails Component
- *
- * Displays detailed information about a specific job.
- * Shows description, timing, status, and any issues/exceptions.
- *
- * Features:
- * - Expandable error messages
- * - Formatted timestamps
- * - Job and batch ID badges
- */
 function JobDetails({
   job
 }: {
   job: Job;
 }) {
-  const [showFullError, setShowFullError] = useState(false);
-  return <div className="ml-8 mb-4 p-4 bg-white border border-slate-200 rounded-md shadow-sm text-sm space-y-3">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Description
-          </label>
-          <p className="text-slate-900 mt-1">{job.description}</p>
+  const [showFullException, setShowFullException] = useState(false);
+  return <div className="job-details">
+      <div className="job-details__grid">
+        <div className="job-details__field">
+          <label className="job-details__label">Description</label>
+          <p className="job-details__value">{job.description}</p>
         </div>
 
-        <div>
-          <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Timing
-          </label>
-          <div className="space-y-1 mt-1">
-            <div className="flex items-center gap-2 text-slate-600">
-              <Clock className="h-3.5 w-3.5" />
+        <div className="job-details__field">
+          <label className="job-details__label">Timing</label>
+          <div className="job-details__timing">
+            <div className="job-details__time">
+              <Clock className="job-details__time-icon" />
               <span>Created: {formatDate(job.created_at)}</span>
             </div>
-            {job.next_run_time && <div className="flex items-center gap-2 text-slate-600">
-                <Clock className="h-3.5 w-3.5 text-blue-500" />
+            {job.next_run_time && <div className="job-details__time">
+                <Clock className="job-details__time-icon job-details__time-icon--next" />
                 <span>Next Run: {formatDate(job.next_run_time)}</span>
               </div>}
           </div>
         </div>
       </div>
 
-      {(job.issues || job.exception) && <div className="bg-red-50 p-3 rounded-md border border-red-100 cursor-pointer hover:bg-red-100 transition-colors" onClick={() => setShowFullError(!showFullError)}>
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <h4 className="font-medium text-red-900 text-xs uppercase tracking-wider mb-1">
-                Issues & Exceptions
+      {job.issues && job.issues.length > 0 && <div className="job-details__issues">
+          <div className="job-details__error-header">
+            <AlertTriangle className="job-details__error-icon job-details__error-icon--warning" />
+            <div className="job-details__error-content">
+              <h4 className="job-details__error-title job-details__error-title--warning">
+                Issues ({job.issues.length})
               </h4>
-              <p className={cn('text-red-800 font-mono text-xs break-all', !showFullError && 'line-clamp-2')}>
-                {job.exception || job.issues}
+              {job.issues.map((issue, idx) => <div key={idx} className="job-details__issue-item">
+                  {issue.info}
+                </div>)}
+            </div>
+          </div>
+        </div>}
+
+      {job.exception && <div className="job-details__exception" onClick={() => setShowFullException(!showFullException)}>
+          <div className="job-details__error-header">
+            <XCircle className="job-details__error-icon job-details__error-icon--error" />
+            <div className="job-details__error-content">
+              <h4 className="job-details__error-title job-details__error-title--error">
+                Exception
+              </h4>
+              <p className={`job-details__error-text job-details__error-text--error ${!showFullException ? 'job-details__error-text--truncated' : ''}`}>
+                {job.exception}
               </p>
-              {!showFullError && <span className="text-xs text-red-500 mt-1 block">
+              {!showFullException && <span className="job-details__error-expand job-details__error-expand--error">
                   Click to expand
                 </span>}
             </div>
           </div>
         </div>}
 
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-        <Badge variant="outline" className="text-xs font-normal text-slate-500">
+      <div className="job-details__badges">
+        <Badge variant="outline" style={{
+        fontSize: '0.75rem',
+        fontWeight: 'normal',
+        color: 'var(--text-tertiary)'
+      }}>
           ID: {job.job_id}
         </Badge>
-        <Badge variant="outline" className="text-xs font-normal text-slate-500">
+        <Badge variant="outline" style={{
+        fontSize: '0.75rem',
+        fontWeight: 'normal',
+        color: 'var(--text-tertiary)'
+      }}>
           Batch: {job.batch_id}
         </Badge>
       </div>

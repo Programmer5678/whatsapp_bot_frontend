@@ -1,28 +1,20 @@
-import React, { useEffect, useState, Component } from 'react';
-import { RefreshCw, QrCode } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { RefreshCw, QrCode, XCircle } from 'lucide-react';
 import { api } from '../shared/api/client';
 import { ConnectionStateResponse } from './types';
 import { Button } from '../shared/ui/Button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/Dialog';
-import { cn, formatDate } from '../shared/utils/helpers';
-/**
- * ConnectionStatus Component
- *
- * Displays WhatsApp connection status in the header.
- * Always visible at the top of the application.
- *
- * Features:
- * - Real-time connection status indicator (green/red)
- * - Last check timestamp
- * - Refresh button to re-check connection
- * - Reconnect button that displays QR code modal
- * - Handles three states: connected, not_connected, evolution_connection_error
- */
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from './ui/Dialog';
+import { formatDate } from '../shared/utils/helpers';
+import './ConnectionStatus.css';
 export function ConnectionStatus() {
   const [status, setStatus] = useState<ConnectionStateResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrError, setQrError] = useState(false);
   const [showQr, setShowQr] = useState(false);
+  const [showConnectForm, setShowConnectForm] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('972523323235');
+  const [apiKey, setApiKey] = useState('siuu');
   const fetchStatus = async () => {
     setLoading(true);
     try {
@@ -37,24 +29,37 @@ export function ConnectionStatus() {
       setLoading(false);
     }
   };
-  const handleReconnect = async () => {
+  const handleConnectSubmit = async () => {
     setLoading(true);
+    setQrError(false);
     try {
       const {
         qr_code
-      } = await api.connect();
-
+      } = await api.connect(phoneNumber, apiKey);
       if (qr_code === '') {
-        throw new Error('Failed to reconnect');
-      }
-      else{
+        setQrError(true);
+        setQrCode(null);
+      } else {
         setQrCode(qr_code);
-        setShowQr(true);
-        fetchStatus();
+        setQrError(false);
       }
+      setShowConnectForm(false);
+      setShowQr(true);
+    } catch (error) {
+      console.error('Failed to reconnect:', error);
+      setQrError(true);
+      setQrCode(null);
+      setShowConnectForm(false);
+      setShowQr(true);
     } finally {
       setLoading(false);
     }
+  };
+  const handleCloseQr = () => {
+    setShowQr(false);
+    setQrCode(null);
+    setQrError(false);
+    fetchStatus(); // Refresh after closing
   };
   useEffect(() => {
     fetchStatus();
@@ -62,14 +67,7 @@ export function ConnectionStatus() {
     return () => clearInterval(interval);
   }, []);
   const getStatusColor = () => {
-    switch (status?.status) {
-      case 'connected':
-        return 'bg-green-500';
-      case 'not_connected':
-        return 'bg-red-500';
-      default:
-        return 'bg-red-500';
-    }
+    return status?.status === 'connected' ? 'connection-status__dot--connected' : 'connection-status__dot--error';
   };
   const getStatusText = () => {
     switch (status?.status) {
@@ -83,46 +81,88 @@ export function ConnectionStatus() {
         return 'Unknown Status';
     }
   };
-  return <div className="flex flex-col gap-2 p-4 bg-white border-b border-slate-200">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className={cn('h-3 w-3 rounded-full shadow-sm ring-2 ring-offset-2 ring-transparent transition-all', getStatusColor())} />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-slate-900 flex items-center gap-2">
+  return <div className="connection-status">
+      <div className="connection-status__row">
+        <div className="connection-status__info">
+          <div className="connection-status__indicator">
+            <div className={`connection-status__dot ${getStatusColor()}`} />
+            <div className="connection-status__details">
+              <span className="connection-status__text">
                 {getStatusText()}
-                {status?.status === 'evolution_connection_error' && <span className="text-xs font-normal text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+                {status?.status === 'evolution_connection_error' && <span className="connection-status__badge">
                     API Unreachable
                   </span>}
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="connection-status__timestamp">
                 As of {formatDate(new Date().toISOString())}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchStatus} disabled={loading} className="gap-2">
-            <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
+        <div className="connection-status__actions">
+          <Button variant="outline" size="sm" onClick={fetchStatus} disabled={loading}>
+            <RefreshCw size={14} className={loading ? 'button__icon--spinning' : ''} style={{
+            marginRight: '0.5rem'
+          }} />
             Refresh
           </Button>
 
-          <Button variant="default" size="sm" onClick={handleReconnect} disabled={loading} className="gap-2">
-            <QrCode className="h-3.5 w-3.5" />
+          <Button variant="default" size="sm" onClick={() => setShowConnectForm(true)} disabled={loading}>
+            <QrCode size={14} style={{
+            marginRight: '0.5rem'
+          }} />
             Reconnect
           </Button>
         </div>
       </div>
 
-      <Dialog open={showQr} onOpenChange={setShowQr}>
-        <DialogContent className="sm:max-w-md">
+      {/* Connect Form Modal */}
+      <Dialog open={showConnectForm} onOpenChange={setShowConnectForm}>
+        <DialogContent>
+          <DialogClose onClose={() => setShowConnectForm(false)} />
           <DialogHeader>
-            <DialogTitle>Scan QR Code to Connect</DialogTitle>
+            <DialogTitle>Connect WhatsApp</DialogTitle>
           </DialogHeader>
-          <div className="flex items-center justify-center p-6 bg-slate-50 rounded-lg">
-            {qrCode ? <img src={`${qrCode}`} alt="WhatsApp Connection QR Code" className="w-64 h-64 object-contain" /> : <div className="flex flex-col items-center gap-2 text-slate-500">
-                <RefreshCw className="h-8 w-8 animate-spin" />
+          <form className="connect-form" onSubmit={e => {
+          e.preventDefault();
+          handleConnectSubmit();
+        }}>
+            <div className="connect-form__field">
+              <label className="connect-form__label">Phone Number</label>
+              <input type="text" className="connect-form__input" placeholder="972523323235" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} required />
+            </div>
+            <div className="connect-form__field">
+              <label className="connect-form__label">API Key</label>
+              <input type="text" className="connect-form__input" placeholder="Enter API key" value={apiKey} onChange={e => setApiKey(e.target.value)} required />
+            </div>
+            <div className="connect-form__actions">
+              <Button type="button" variant="outline" size="sm" onClick={() => setShowConnectForm(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="default" size="sm" disabled={loading}>
+                {loading ? 'Connecting...' : 'Connect'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Code Modal */}
+      <Dialog open={showQr} onOpenChange={handleCloseQr}>
+        <DialogContent>
+          <DialogClose onClose={handleCloseQr} />
+          <DialogHeader>
+            <DialogTitle>
+              {qrError ? 'Connection Failed' : 'Scan QR Code to Connect'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="qr-modal__content">
+            {qrError ? <div className="qr-modal__error">
+                <XCircle className="qr-modal__error-icon" />
+                <p>Failed to generate QR code. Please try again.</p>
+              </div> : qrCode ? <img src={qrCode} alt="WhatsApp Connection QR Code" className="qr-modal__image" /> : <div className="qr-modal__loading">
+                <RefreshCw size={32} className="button__icon--spinning" />
                 <p>Generating QR Code...</p>
               </div>}
           </div>

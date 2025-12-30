@@ -1,24 +1,13 @@
-import React, { useEffect, useState, Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusCircle, ListTodo, RefreshCw } from 'lucide-react';
 import { JobTree } from './current-jobs/JobTree';
 import { NewActionForm } from './new-actions/NewActionForm';
 import { api } from '../shared/api/client';
 import { buildJobTree, TreeNode } from './current-jobs/utils/jobTree';
 import { Button } from '../shared/ui/Button';
-import { cn } from '../shared/utils/helpers';
+import './WorkspaceLayout.css';
 type Tab = 'new_actions' | 'current_jobs';
-/**
- * WorkspaceLayout Component
- *
- * Main workspace area containing tabbed interface for:
- * - New Actions: Create new automation actions
- * - Current Jobs: Monitor and manage running jobs
- *
- * This component handles:
- * - Tab switching
- * - Job fetching and refresh
- * - Layout and composition of workspace features
- */
+const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
 export function WorkspaceLayout() {
   const [activeTab, setActiveTab] = useState<Tab>('new_actions');
   const [jobTree, setJobTree] = useState<Record<string, TreeNode>>({});
@@ -38,57 +27,61 @@ export function WorkspaceLayout() {
   useEffect(() => {
     if (activeTab === 'current_jobs') {
       fetchJobs();
+      const interval = setInterval(fetchJobs, AUTO_REFRESH_INTERVAL);
+      return () => clearInterval(interval);
     }
   }, [activeTab]);
-  return <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 space-y-8">
-      <div className="flex flex-col gap-6">
-        {/* Tab Navigation */}
-        <div className="flex items-center justify-center p-1 bg-slate-200/50 rounded-lg self-center">
-          <button onClick={() => setActiveTab('new_actions')} className={cn('flex items-center gap-2 px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200', activeTab === 'new_actions' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700')}>
-            <PlusCircle className="h-4 w-4" />
+  return <main className="workspace">
+      <div className="workspace__container">
+        <div className="workspace__tabs">
+          <button onClick={() => setActiveTab('new_actions')} className={`workspace__tab ${activeTab === 'new_actions' ? 'workspace__tab--active' : ''}`}>
+            <PlusCircle className="workspace__tab-icon" />
             New Actions
           </button>
-          <button onClick={() => setActiveTab('current_jobs')} className={cn('flex items-center gap-2 px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200', activeTab === 'current_jobs' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700')}>
-            <ListTodo className="h-4 w-4" />
+          <button onClick={() => setActiveTab('current_jobs')} className={`workspace__tab ${activeTab === 'current_jobs' ? 'workspace__tab--active' : ''}`}>
+            <ListTodo className="workspace__tab-icon" />
             Current Jobs
           </button>
         </div>
 
-        {/* Content Area */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm min-h-[500px] p-6">
-          {activeTab === 'new_actions' ? <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-slate-900">
-                  Create New Action
-                </h2>
-                <p className="text-slate-500 text-sm mt-1">
+        <div className="workspace__content">
+          {activeTab === 'new_actions' ? <div>
+              <div className="workspace__header">
+                <h2 className="workspace__title">Create New Action</h2>
+                <p className="workspace__subtitle">
                   Select an action type to configure and launch automation.
                 </p>
               </div>
               <NewActionForm />
-            </div> : <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-6">
+            </div> : <div style={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+              <div className="workspace__jobs-header">
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-900">
-                    Current Jobs
-                  </h2>
-                  <p className="text-slate-500 text-sm mt-1">
+                  <h2 className="workspace__title">Current Jobs</h2>
+                  <p className="workspace__subtitle">
                     Monitor and manage running automation tasks.
                   </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={fetchJobs} disabled={loadingJobs} className="gap-2">
-                  <RefreshCw className={cn('h-4 w-4', loadingJobs && 'animate-spin')} />
+                <Button variant="outline" size="sm" onClick={fetchJobs} disabled={loadingJobs}>
+                  <RefreshCw size={16} className={loadingJobs ? 'button__icon--spinning' : ''} style={{
+                marginRight: '0.5rem'
+              }} />
                   Refresh List
                 </Button>
               </div>
 
-              <div className="flex-1 overflow-auto pr-2">
-                {loadingJobs && Object.keys(jobTree).length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                    <RefreshCw className="h-8 w-8 animate-spin mb-2" />
+              <div className="workspace__jobs-content">
+                {loadingJobs && Object.keys(jobTree).length === 0 ? <div className="workspace__loading">
+                    <RefreshCw className="workspace__loading-icon button__icon--spinning" />
                     <p>Loading jobs...</p>
-                  </div> : Object.keys(jobTree).length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-slate-400 border-2 border-dashed border-slate-100 rounded-lg">
-                    <ListTodo className="h-8 w-8 mb-2 opacity-50" />
-                    <p>No active jobs found</p>
+                  </div> : Object.keys(jobTree).length === 0 ? <div className="workspace__empty">
+                    <div className="workspace__empty-container">
+                      <ListTodo className="workspace__empty-icon" />
+                      <p>No active jobs found</p>
+                    </div>
                   </div> : <JobTree nodes={jobTree} onRefresh={fetchJobs} />}
               </div>
             </div>}

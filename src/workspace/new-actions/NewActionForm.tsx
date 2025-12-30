@@ -1,29 +1,12 @@
-import React, { useState, Component } from 'react';
+import React, { useState } from 'react';
 import { Plus, Send } from 'lucide-react';
 import { Button } from '../../shared/ui/Button';
 import { Input } from './ui/Input';
 import { Label } from './ui/Label';
 import { Card, CardContent } from './ui/Card';
 import { api } from '../../shared/api/client';
+import './NewActionForm.css';
 type ActionType = 'raf0' | 'mavdak' | 'hakhana' | 'veadat_keva';
-/**
- * NewActionForm Component
- *
- * Allows users to create new WhatsApp group automation actions.
- * Displays different form fields based on the selected action type.
- *
- * Action Types:
- * - raf0: Simple action with date and participants
- * - mavdak: Complex action with multiple fields including forms link
- * - hakhana: Action with date, deadline, and participants
- * - veadat_keva: Similar to hakhana with date, deadline, and participants
- *
- * Features:
- * - Dynamic form fields based on action type
- * - Form validation
- * - Success/error feedback
- * - Auto-reset on successful submission
- */
 export function NewActionForm() {
   const [selectedAction, setSelectedAction] = useState<ActionType | null>(null);
   const [loading, setLoading] = useState(false);
@@ -79,50 +62,48 @@ export function NewActionForm() {
       setLoading(false);
     }
   };
-  return <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+  return <div className="action-form">
+      <div className="action-form__buttons">
         {(['raf0', 'mavdak', 'hakhana', 'veadat_keva'] as ActionType[]).map(type => <Button key={type} variant={selectedAction === type ? 'default' : 'outline'} onClick={() => {
         setSelectedAction(selectedAction === type ? null : type);
         setSuccess(null);
         setError(null);
-      }} className="capitalize">
+      }} className="action-form__button">
               {type.replace('_', ' ')}
             </Button>)}
       </div>
 
-      {selectedAction && <Card className="animate-in fade-in slide-in-from-top-4 duration-300 border-slate-200 shadow-sm">
-          <CardContent className="pt-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
-                <Plus className="h-4 w-4 text-slate-500" />
-                <h3 className="font-medium text-slate-900 capitalize">
+      {selectedAction && <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="action-form__form">
+              <div className="action-form__header">
+                <Plus className="action-form__header-icon" />
+                <h3 className="action-form__header-title">
                   Create {selectedAction.replace('_', ' ')}
                 </h3>
               </div>
 
-              {selectedAction === 'raf0' && <>
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Date</Label>
-                    <Input type="date" name="date" required />
-                  </div>
-                </>}
+              {selectedAction === 'raf0' && <div className="action-form__field">
+                  <Label htmlFor="date">Date</Label>
+                  <Input type="date" name="date" required />
+                </div>}
 
               {selectedAction === 'mavdak' && <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                  <div className="action-form__grid">
+                    <div className="action-form__field">
                       <Label htmlFor="base_date">Base Date</Label>
                       <Input type="date" name="base_date" required />
                     </div>
-                    <div className="space-y-2">
+                    <div className="action-form__field">
                       <Label htmlFor="deadline_mavdak_list">Deadline</Label>
                       <Input type="datetime-local" name="deadline_mavdak_list" required />
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="action-form__field">
                     <Label htmlFor="forms_link">Forms Link</Label>
                     <Input type="url" name="forms_link" placeholder="https://..." required />
                   </div>
-                  <div className="space-y-2">
+                  <div className="action-form__field">
                     <Label htmlFor="iluzei_reaionot_mador_mavdak">
                       Iluzei Reaionot
                     </Label>
@@ -130,40 +111,46 @@ export function NewActionForm() {
                   </div>
                 </>}
 
-              {(selectedAction === 'hakhana' || selectedAction === 'veadat_keva') && <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Date</Label>
-                      <Input type="date" name="date" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="deadline">Deadline</Label>
-                      <Input type="datetime-local" name="deadline" required />
-                    </div>
+              {(selectedAction === 'hakhana' || selectedAction === 'veadat_keva') && <div className="action-form__grid">
+                  <div className="action-form__field">
+                    <Label htmlFor="date">Date</Label>
+                    <Input type="date" name="date" required />
                   </div>
-                </>}
+                  <div className="action-form__field">
+                    <Label htmlFor="deadline">Deadline</Label>
+                    <Input type="datetime-local" name="deadline" required />
+                  </div>
+                </div>}
 
-              <div className="space-y-2">
+              <div className="action-form__field">
                 <Label htmlFor="group_participants">
                   Participants (comma separated phone numbers)
                 </Label>
                 <Input name="group_participants" placeholder="+972500000000, +972500000001" required />
-                <p className="text-xs text-slate-500">Format: +972...</p>
+                <p className="action-form__hint">Format: +972...</p>
               </div>
 
-              {success && <div className="p-3 bg-green-50 text-green-700 text-sm rounded-md border border-green-100">
+              {success && <div className="action-form__feedback action-form__feedback--success">
                   {success}
                 </div>}
-              {error && <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md border border-red-100">
+              {error && <div className="action-form__feedback action-form__feedback--error">
                   {error}
                 </div>}
 
-              <div className="flex justify-end pt-2">
-                <Button type="submit" disabled={loading} className="w-full sm:w-auto">
-                  {loading ? <span className="flex items-center gap-2">
+              <div className="action-form__actions">
+                <Button type="submit" disabled={loading} className="action-form__submit">
+                  {loading ? <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
                       Processing...
-                    </span> : <span className="flex items-center gap-2">
-                      <Send className="h-4 w-4" />
+                    </span> : <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                      <Send size={16} />
                       Create Action
                     </span>}
                 </Button>

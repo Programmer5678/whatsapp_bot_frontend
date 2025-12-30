@@ -1,0 +1,108 @@
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Variants */
+.button--default {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 0.5rem 1rem;
+  height: 2.5rem;
+}
+
+.button--default:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.button--outline {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  height: 2.5rem;
+}
+
+.button--outline:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+}
+
+.button--ghost {
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  height: 2.5rem;
+}
+
+.button--ghost:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+}
+
+.button--destructive {
+  background-color: var(--error);
+  color: white;
+  padding: 0.5rem 1rem;
+  height: 2.5rem;
+}
+
+.button--destructive:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* Sizes */
+.button--sm {
+  height: 2.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.button--lg {
+  height: 2.75rem;
+  padding: 0.5rem 2rem;
+}
+
+.button--icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+}
+
+.button--icon.button--sm {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.button__icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.button__icon--spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
