@@ -1,0 +1,15 @@
+.connection-header {
+  height: 80px;
+  padding: var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.connection-header__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}

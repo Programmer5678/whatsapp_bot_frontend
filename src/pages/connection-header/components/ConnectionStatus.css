@@ -1,0 +1,47 @@
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.connection-status__indicator {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--error);
+}
+
+.connection-status__indicator.connected {
+  background: var(--success);
+}
+
+.connection-status__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.connection-status__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.connection-status__title {
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.connection-status__badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-radius: var(--radius-lg);
+  font-size: 12.5px;
+  box-shadow: var(--shadow-sm);
+}
+
+.connection-status__timestamp {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

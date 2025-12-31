@@ -1,0 +1,26 @@
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: bold;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.action-button.primary {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.action-button:hover {
+  opacity: 0.8;
+}
+
+.action-button.default:hover {
+  background-color: var(--text-secondary);
+}
