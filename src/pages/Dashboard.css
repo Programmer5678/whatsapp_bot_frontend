@@ -1,0 +1,4 @@
+#main-content.fade-out {
+  opacity: 0.5;
+  pointer-events: none;
+}

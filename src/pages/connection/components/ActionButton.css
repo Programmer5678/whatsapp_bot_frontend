@@ -24,3 +24,17 @@
 .action-button.default:hover {
   background-color: var(--text-secondary);
 }
+
+.action-button__icon.rotate{
+  animation: spin360 1s linear infinite;
+}
+
+@keyframes spin360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

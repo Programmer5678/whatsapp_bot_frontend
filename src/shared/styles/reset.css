@@ -14,19 +14,22 @@ body {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.5;
+  height: 100%;
+}
+
+
+input, textarea, select, button {
+
+  border: none;
+  background: none;
+  font: inherit;       /* inherit font styles */
+  color: inherit;      /* inherit text color */
+  outline: none;       /* remove focus outline */
+  font-family: inherit;
 }
 
 button {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: inherit;
   cursor: pointer;
-}
-
-input {
-  font-family: inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {

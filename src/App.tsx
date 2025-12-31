@@ -1,5 +1,5 @@
 import React from 'react';
 import { Dashboard } from './pages/Dashboard';
 export function App() {
-  return <Dashboard />;
+  return <div style={{height : "100vh"}}> <Dashboard /></div>;
 }
