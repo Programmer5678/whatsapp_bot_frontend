@@ -1,13 +1,17 @@
 import React, { useEffect } from "react";
 import "./styles/ConnectionHeader.css";
 import { ConnectionStatus } from "./components/ConnectionStatus";
-import { ActionButton } from "./components/ActionButton";
 import { useState } from "react";
 import { ConnectionStateResponse, ConnectionStatusType } from "../../shared/api/types";
 import { api } from "../../shared/api/client";
 
 
-export function ConnectionHeader() {
+
+export interface ConnectionHeaderProps {
+  openConnectionPopUp : () => void;
+}
+
+export function ConnectionHeader(props : ConnectionHeaderProps) {
   // Last known connection status returned from the API
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatusType>("evolution_connection_error");
@@ -91,17 +95,37 @@ export function ConnectionHeader() {
       />
 
       <div className="connection-header__actions">
+
+
         {/* Manual refresh trigger if loading - */}
 
         {/* rotates while loading */}
-        <ActionButton icon="&#x21bb;" label="Refresh" click={fetchAndUpdateConnectionStatus} icon_class={isLoading ? "rotate" : ""} />
+
+        <button
+          className={`action-button default`}
+          onClick={fetchAndUpdateConnectionStatus}
+        >
+          <span className={`action-button__icon ${isLoading ? "rotate" : ""}`}>
+            &#x21bb;
+          </span>
+          <span>Refresh</span>
+          
+        </button>
 
         {/* Future reconnect action */}
-        <ActionButton
-          icon="&#x1F4F1;"
-          label="Reconnect"
-          variant="primary"
-        />
+        <button
+          className={`action-button primary`}
+          onClick={props.openConnectionPopUp}
+        >
+          <span className={`action-button__icon}`}>
+            &#x1F4F1;
+          </span>
+          <span>Reconnect</span>
+          
+        </button>
+
+
+
       </div>
     </header>
   );

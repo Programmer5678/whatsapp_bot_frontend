@@ -1,52 +1,76 @@
 import React, { useState } from "react";
+import "./ConnectionPopUp.css";
+import { api } from "../../shared/api/client";
 
-export function ConnectionPopUp() {
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [APIKey, setAPIKey] = useState<string>("");
+export interface ConnectionPopUpProps {
+  closeConnectionPopUp : () => void;
+}
+
+
+export function ConnectionPopUp(props : ConnectionPopUpProps) {
+  // Controlled inputs: phone number and API key
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [APIKey, setAPIKey] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); // stops page reload
+    api.connect(phoneNumber, APIKey)
+
+  }
 
   return (
-    <form
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        width: "400px",
-        height: "300px",
-        transform: "translate(-50%, -50%)",
-        backgroundColor: "black",
-        padding: "var(--spacing-lg)",
-        display: "flex",
-        flexDirection : "column",
-        gap: "var(--spacing-md)"
-      }}
-    >
-      <div style={{fontSize:"20px", fontWeight:"bold"}}>Connect Whatsapp</div>
+    <form className="connection-popup" onSubmit={handleSubmit}>
+      {/* Popup title */}
+      <div className="connection-popup__title">
+        Connect WhatsApp
+      </div>
 
-      <label style={{display:"flex", flexDirection:"column"}}>
-        Phone Number
+      {/* Phone number input (controlled) */}
+      <label className="connection-popup__field">
+        <span className="connection-popup__label">Phone Number</span>
         <input
+          className="connection-popup__input"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          style={{ padding:"var(--spacing-md)", backgroundColor:"yellow", border:"1px solid", borderRadius:"var(--radius-md)" }}
+          placeholder="9725XXXXXXXX"
         />
       </label>
 
-      <label style={{display:"flex", flexDirection:"column"}}>
-        API Key
-        <input 
+      {/* API key input (controlled) */}
+      <label className="connection-popup__field">
+        <span className="connection-popup__label">API Key</span>
+        <input
+          className="connection-popup__input"
           value={APIKey}
           onChange={(e) => setAPIKey(e.target.value)}
+          placeholder="You dont know this? you're done!"
         />
       </label>
 
-      <div style={{display:"flex", justifyContent:"flex-end"}}>
+      {/* Submit row aligned to the right */}
+      <div className="connection-popup__actions">
+        {/* Styled using shared ActionButton styles */}
+        <button
+          className="action-button primary"
+          type="submit"
 
-      <button>
-        Submit
-      </button>
+        >
+          <span>Connect</span>
+        </button>
 
       </div>
 
+
+      {/* Close button in the top-right corner of the popup */}
+      {/* IMPORTANT: type="button" so it does NOT submit the form */}
+      <button
+        type="button"
+        className="connection-popup__close"
+        aria-label="Close"
+        onClick={props.closeConnectionPopUp}
+      >
+        &times;
+      </button>
     </form>
   );
 }

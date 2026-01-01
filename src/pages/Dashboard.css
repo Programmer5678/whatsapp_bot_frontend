@@ -1,4 +1,11 @@
 #main-content.fade-out {
-  opacity: 0.5;
   pointer-events: none;
+}
+
+#main-content.fade-out::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: black;
+  opacity: 0.7;
 }
