@@ -1,13 +1,12 @@
 import React from 'react';
-import { ConnectionHeader } from './connection/ConnectionHeader';
-import { ConnectionPopUp } from './connection/ConnectionPopUp';
+import { ConnectionHeader } from '../connection/header/ConnectionHeader';
+import { ConnectionPopUp } from '../connection/popup/ConnectionPopUp';
 import { useState } from 'react';
 import './Dashboard.css';
-import './ActionButton.css'
 
 export function Dashboard() {
 
-    const [isConnectionPopUpOpen, setIsConnectionPopUpOpen] = useState<boolean>(true);
+    const [isConnectionPopUpOpen, setIsConnectionPopUpOpen] = useState<boolean>(false);
 
     function closeConnectionPopUp( )  {
         setIsConnectionPopUpOpen( (isConnectionPopUpOpen) => false );

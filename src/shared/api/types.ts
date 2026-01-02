@@ -53,3 +53,10 @@ export interface ConnectionStateResponse {
   status: ConnectionStatusType;
   last_run?: string;
 }
+
+export interface QRCodeResponseModel {
+  qr_code: string;
+  delete_response: any;
+  create_response: any;
+  connect_response: any;
+};

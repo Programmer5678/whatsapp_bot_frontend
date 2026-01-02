@@ -1,0 +1,65 @@
+.connection-form.connection {
+    opacity: 0.9;
+}
+.connection-form.connection label {
+    pointer-events: none;
+}
+
+/* Popup title */
+.connection-form__title {
+  font-size: var(--font-lg);
+  font-weight: bold;
+}
+
+/* Field wrapper (label + input) */
+.connection-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Field label text */
+.connection-form__label {
+  font-weight: bold;
+}
+
+/* Inputs are visually consistent but still native */
+.connection-form__field input {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Submit row aligned to the right */
+.connection-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+}
+
+
+.connection-form__input:focus {
+    border-color: var(--info-bg) !important;
+    border-width: 3px;
+}
+
+/* .loading-dots{
+    display:"flex" !important;
+    flex-direction: "row";
+} */
+/* 
+.loading-dots::after{
+
+    content : "...";
+    animation: loadingDots 1s linear infinite;
+    width : 100px;
+    /* background-color: red; 
+}
+
+/* @keyframes loadingDots {
+    0% { content: "."; width:100px;}
+    33% { content: ".."; }
+    66% { content: "..."; }
+    100% { content: ""; }
+}  */

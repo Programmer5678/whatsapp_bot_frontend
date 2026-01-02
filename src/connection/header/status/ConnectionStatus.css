@@ -37,11 +37,12 @@
   background: var(--error-bg);
   color: var(--error-text);
   border-radius: var(--radius-lg);
-  font-size: 12.5px;
+  font-size: var(--font-md);
   box-shadow: var(--shadow-sm);
 }
 
 .connection-status__timestamp {
-  font-size: 11px;
+  font-size: var(--font-sm);
   color: var(--text-tertiary);
 }
+

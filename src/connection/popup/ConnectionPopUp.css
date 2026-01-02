@@ -1,0 +1,65 @@
+/* 
+  Popup positioning:
+  absolute + top/left/transform centers the form on screen,
+  which is appropriate here because this component represents a modal popup.
+*/
+.connection-pop-up {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 500px;
+  
+}
+
+.connection-pop-up-body {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+
+    padding: var(--spacing-lg);
+    background-color: var(--bg-primary);
+}
+
+
+
+
+
+/* Shared popup control button */
+.connection-pop-up__control {
+
+  display: none;
+
+  position: absolute;
+  top: 3%;
+
+  font-size: 35px;
+  color: var(--text-tertiary);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  box-shadow: var(--shadow-lg);
+
+}
+
+.connection-pop-up__control:hover {
+  color: white;
+}
+
+.connection-pop-up__control.left {
+  display: block;
+  left: 5%;
+}
+
+.connection-pop-up__control.right {
+  display: block;
+  right: 5%;
+}

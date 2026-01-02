@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import "./styles/ConnectionHeader.css";
-import { ConnectionStatus } from "./components/ConnectionStatus";
+import "./ConnectionHeader.css";
+import { ConnectionStatus } from "./status/ConnectionStatus";
 import { useState } from "react";
 import { ConnectionStateResponse, ConnectionStatusType } from "../../shared/api/types";
 import { api } from "../../shared/api/client";
-
+import "../../shared/styles/ActionButton.css";
 
 
 export interface ConnectionHeaderProps {

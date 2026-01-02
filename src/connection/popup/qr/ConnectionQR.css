@@ -1,0 +1,21 @@
+.connection-qr {
+  position: relative;
+  padding-top: var(--spacing-xxxl);
+}
+
+
+
+.connection-qr__qr-wrapper {
+  display: flex;
+  justify-content: center;
+
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+}
+
+.connection-qr__qr-image {
+  width: 280px;
+  height: 280px;
+}

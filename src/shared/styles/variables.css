@@ -1,6 +1,11 @@
 
 :root {
 
+  /* Font Sizes */
+  /* --font-xs: 12px; */
+  --font-sm: 11px;
+  --font-md: 12.5px;
+  --font-lg: 20px;
 
   /* Colors - Light Mode */
   --bg-primary: #ffffff;
@@ -38,6 +43,8 @@
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --spacing-xxxl: 4rem;
   
   /* Border Radius */
   --radius-sm: 0.375rem;

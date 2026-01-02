@@ -1,4 +1,4 @@
-import { Raf0RequestModel, MavdakRequestModel, HakhanaRequestModel, VeadatKevaRequestModel , ConnectionStateResponse} from './types';
+import { Raf0RequestModel, MavdakRequestModel, HakhanaRequestModel, VeadatKevaRequestModel , ConnectionStateResponse, QRCodeResponseModel} from './types';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -17,9 +17,7 @@ class ApiService {
   async getConnectionState(): Promise<ConnectionStateResponse> {
     return this.request<ConnectionStateResponse>('/connection/connection_state');
   }
-  async connect(number: string, apiKey: string): Promise<{
-    qr_code: string;
-  }> {
+  async connect(number: string, apiKey: string) {
     const requestBody = {
       number,
       api_key: apiKey
@@ -32,15 +30,8 @@ class ApiService {
       body: JSON.stringify(requestBody)
     });
     if (!response.ok) throw new Error('Failed to reconnect');
-    try {
-      return {
-        qr_code: (await response.json())['qr_code']
-      };
-    } catch {
-      return {
-        qr_code: ''
-      };
-    }
+    
+    return (await response.json());
   }
   async getAllJobs(): Promise<JobTreeResponse> {
     return this.request<JobTreeResponse>('/job/get_all_jobs');
