@@ -22,7 +22,7 @@
 }
 
 .action-button.default:hover {
-  background-color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
 }
 
 .action-button__icon.rotate{

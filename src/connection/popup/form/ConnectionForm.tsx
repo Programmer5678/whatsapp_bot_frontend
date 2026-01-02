@@ -68,9 +68,13 @@ export function ConnectionForm(props: ConnectionFormProps) {
                 <button
                     className="action-button primary"
                     type="submit"
-                    style={{ pointerEvents: isConnecting ? "none" : "auto" }}
+                    style={{ pointerEvents: isConnecting ? "none" : "auto", display:"flex", flexDirection:"row" , gap: 0}}
                 >
                     <span>{isConnecting ? "Connecting" : "Connect"}</span>
+                    
+                    {isConnecting && (
+                        <div className="loading-dots"><span className="loading-dots-placeholder">...</span></div>
+                    )}
                 </button>
             </div>
         </form>
