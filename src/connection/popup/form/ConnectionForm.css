@@ -40,8 +40,7 @@
 
 
 .connection-form__input:focus {
-    border-color: var(--info-bg) !important;
-    border-width: 3px;
+    outline: 3px solid var(--info-bg);
 }
 
 

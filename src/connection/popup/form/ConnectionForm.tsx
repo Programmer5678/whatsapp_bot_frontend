@@ -61,7 +61,7 @@ export function ConnectionForm(props: ConnectionFormProps) {
 
             {/* Buttons */}
             <div className="connection-form__actions">
-                <button className="action-button" type="button" onClick={props.closeConnectionPopUp}>
+                <button className="action-button default" type="button" onClick={props.closeConnectionPopUp}>
                     Cancel
                 </button>
 
@@ -71,7 +71,7 @@ export function ConnectionForm(props: ConnectionFormProps) {
                     style={{ pointerEvents: isConnecting ? "none" : "auto", display:"flex", flexDirection:"row" , gap: 0}}
                 >
                     <span>{isConnecting ? "Connecting" : "Connect"}</span>
-                    
+
                     {isConnecting && (
                         <div className="loading-dots"><span className="loading-dots-placeholder">...</span></div>
                     )}
