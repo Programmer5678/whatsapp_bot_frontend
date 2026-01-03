@@ -5,7 +5,9 @@
   /* --font-xs: 12px; */
   --font-sm: 11px;
   --font-md: 12.5px;
+  --font-mdl: 14px;
   --font-lg: 20px;
+  --font-xl: 24px;
 
   /* Colors - Light Mode */
   --bg-primary: #ffffff;

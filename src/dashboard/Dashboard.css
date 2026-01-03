@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
 }
 
 #main-content.fade-out {
@@ -69,4 +68,14 @@
 
 .switcher-item.selected:hover :nth-child(n) {
   opacity: 0.85;
+}
+
+.sharedWorkspace {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 100rem;
+    min-height: 32rem;
+    padding: var(--spacing-lg);
 }
