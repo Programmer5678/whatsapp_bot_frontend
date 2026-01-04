@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { api } from "../../../shared/api/client" ;
 import { QRCodeResponseModel } from "../../../shared/api/types";
 import "./ConnectionForm.css";
+import { Field } from "../../../shared/components/Field";
 
 interface ConnectionFormProps {
     hide: boolean
@@ -37,27 +38,23 @@ export function ConnectionForm(props: ConnectionFormProps) {
         >
             <div className="connection-form__title">Connect WhatsApp</div>
 
-            {/* Phone number input */}
-            <label className="connection-form__field">
-                <span className="connection-form__label">Phone Number</span>
+
+            <Field label="Phone Number">
                 <input
-                    className="connection-form__input"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="9725XXXXXXXX"
                 />
-            </label>
+            </Field>
 
             {/* API key input */}
-            <label className="connection-form__field">
-                <span className="connection-form__label">API Key</span>
+            <Field label="API Key">
                 <input
-                    className="connection-form__input"
                     value={APIKey}
                     onChange={(e) => setAPIKey(e.target.value)}
                     placeholder="You dont know this? you're done!"
                 />
-            </label>
+            </Field>
 
             {/* Buttons */}
             <div className="connection-form__actions">

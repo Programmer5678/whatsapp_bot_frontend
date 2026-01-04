@@ -11,36 +11,12 @@
   font-weight: bold;
 }
 
-/* Field wrapper (label + input) */
-.connection-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-/* Field label text */
-.connection-form__label {
-  font-weight: bold;
-}
-
-/* Inputs are visually consistent but still native */
-.connection-form__field input {
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-lg);
-}
 
 /* Submit row aligned to the right */
 .connection-form__actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-md);
-}
-
-
-.connection-form__input:focus {
-    outline: 3px solid var(--info-bg);
 }
 
 
