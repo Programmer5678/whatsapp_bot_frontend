@@ -3,13 +3,14 @@ import './NewActions.css';
 import { Field } from '../shared/components/Field';
 import { api } from '../shared/api/client';
 import { MavdakRequestModel } from '../shared/api/types';
+import { LoadingDots } from '../shared/components/LoadingDots';
 
-function getTimeZoneSuffix() : string{
+function getTimeZoneSuffix(): string {
 
-    const offset : number = - (new Date().getTimezoneOffset() ) ; 
-    const sign : string = offset > 0 ? '+' : '-';
-    const offsetHours : string = Math.floor(Math.abs(offset) / 60 ).toString().padStart(2, '0');
-    const offsetMinutes : string = (Math.abs(offset) % 60 ).toString().padStart(2, '0');
+    const offset: number = - (new Date().getTimezoneOffset());
+    const sign: string = offset > 0 ? '+' : '-';
+    const offsetHours: string = Math.floor(Math.abs(offset) / 60).toString().padStart(2, '0');
+    const offsetMinutes: string = (Math.abs(offset) % 60).toString().padStart(2, '0');
 
     return `${sign}${offsetHours}:${offsetMinutes}`;
 }
@@ -18,7 +19,7 @@ function warnTimeZone() {
 
     const timeZoneSuffix = getTimeZoneSuffix();
 
-    if( timeZoneSuffix != '+02:00' && timeZoneSuffix != '+03:00' ) {
+    if (timeZoneSuffix != '+02:00' && timeZoneSuffix != '+03:00') {
         alert(`Warning. Timezone ${timeZoneSuffix} is not Israel - impacts inputs!`)
     }
 }
@@ -41,22 +42,42 @@ export function NewActions() {
             group_participants: ""
         });
 
-    useEffect( warnTimeZone, [])
+    const [isConnecting, setIsConnecting] = useState<boolean>(false);
+
+    const [responseSuccess, setResponseSuccess] = useState<boolean | null>(null);
+
+    useEffect(warnTimeZone, [])
 
     function sendRequest(e: React.FormEvent<HTMLFormElement>) {
-        
+
+        setIsConnecting(true);
+
         e.preventDefault();
 
-        console.log( (new Date(form.deadline_mavdak_list)).toISOString() )
+        const requestBody: MavdakRequestModel = {
+            ...form,
+            group_participants: form.group_participants.split(","),
+            deadline_mavdak_list: form.deadline_mavdak_list + getTimeZoneSuffix(),
+        };
 
-        const requestBody : MavdakRequestModel = {...form, group_participants : form.group_participants.split(","), 
-            deadline_mavdak_list : form.deadline_mavdak_list + getTimeZoneSuffix()
-         };
+        console.log(requestBody);
 
-         to be continued
-        console.log(requestBody); ///
+        async function request(){
 
-        // api.createMavdak( requestBody )
+            try{
+                await api.createMavdak( requestBody );
+                setResponseSuccess( true ); 
+            }
+            catch{
+                setResponseSuccess( false );
+            }
+            finally{
+            setIsConnecting(false);
+            }
+        }
+
+        request();
+
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +88,10 @@ export function NewActions() {
         setForm(prevForm => ({ ...prevForm, [name]: value }));
     };
 
-    
+
 
     return (
-        <>
+        <div style={isConnecting ? { pointerEvents: "none", opacity: "0.8" } : {}}>
             {/* header */}
             <div className="new-actions-header">
                 <div className="new-actions-title">
@@ -95,10 +116,12 @@ export function NewActions() {
             {/* spacer */}
             <div style={{ height: "var(--spacing-md)" }} />
 
-            <form style={{ border: "1px solid var(--border-color)", borderRadius: "var(--radius-md)", padding: "var(--spacing-lg)" ,
-                display: "flex", flexDirection: "column", gap: "var(--spacing-lg)" 
+
+            <form style={{
+                border: "1px solid var(--border-color)", borderRadius: "var(--radius-md)", padding: "var(--spacing-lg)",
+                display: "flex", flexDirection: "column", gap: "var(--spacing-lg)",
             }}
-            onSubmit={sendRequest}
+                onSubmit={sendRequest}
             >
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
@@ -125,7 +148,8 @@ export function NewActions() {
                             <input
                                 type="date"
                                 name="base_date"
-                                onChange={ handleInputChange }
+                                onChange={handleInputChange}
+                                required
                             />
                         </Field>
 
@@ -133,16 +157,19 @@ export function NewActions() {
                             <input
                                 type="datetime-local"
                                 name="deadline_mavdak_list"
-                                onChange={ handleInputChange }
+                                onChange={handleInputChange}
+                                required
                             />
                         </Field>
                     </div>
 
                     <Field label="Forms Link">
                         <input
+                            type="url"
                             name="forms_link"
                             placeholder="https://..."
-                            onChange={ handleInputChange }
+                            onChange={handleInputChange}
+                            required
                         />
                     </Field>
 
@@ -150,31 +177,76 @@ export function NewActions() {
                         <input
                             name="iluzei_reaionot_mador_mavdak"
                             placeholder="message of iluzei reaionot"
-                            onChange={ handleInputChange }
+                            onChange={handleInputChange}
+                            required
                         />
                     </Field>
 
                     <Field label="Participants (comma separated phone numbers)">
                         <input
+                            pattern="[\s\t]*(9725[0-9]{8}[\s\t,]*)*"
                             name="group_participants"
                             placeholder="972533332224, 972533972298,..."
-                            onChange={ handleInputChange }
+                            onChange={handleInputChange}
+                            required
                         />
                     </Field>
 
                 </div>
 
-                <div style={{display : "flex", justifyContent:"flex-end" }}>
+                {
+                    responseSuccess == false
+
+                    &&
+
+                    <div style={{
+                        backgroundColor: "var(--error-bg)", color: "var(--error-text)", border: "1px solid var(--error)",
+                        borderRadius: "var(--radius-md)", padding: "var(--spacing-sm)", fontSize: "var(--font-mdl)"
+                    }}>
+                        Failed to fetch
+                    </div>
+
+                }
+
+                {
+                    responseSuccess == true
+
+                    &&
+
+                    <div style={{
+                        backgroundColor: "var(--success-bg)", color: "var(--success-text)", border: "1px solid var(--success)",
+                        borderRadius: "var(--radius-md)", padding: "var(--spacing-sm)", fontSize: "var(--font-mdl)"
+                    }}>
+                        Successfully created mavdak action!
+                    </div>
+
+                }
+
+
+
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
 
                     <button className="action-button primary">
-                        <div>&#10148;</div>
-                        <div>Create Action</div>
+                        {isConnecting ?
+                            (
+                                <div style={{ display: "flex", gap: 0 }}>
+                                    Loading
+                                    <LoadingDots />
+                                </div>
+                            )
+                            : (
+                                <>
+                                    <div>&#10148;</div>
+                                    <div>Create Action</div>
+                                </>
+                            )
+                        }
                     </button>
 
                 </div>
 
             </form>
 
-        </>
+        </div>
     );
 }

@@ -3,6 +3,7 @@ import { api } from "../../../shared/api/client" ;
 import { QRCodeResponseModel } from "../../../shared/api/types";
 import "./ConnectionForm.css";
 import { Field } from "../../../shared/components/Field";
+import { LoadingDots } from "../../../shared/components/LoadingDots";
 
 interface ConnectionFormProps {
     hide: boolean
@@ -69,9 +70,7 @@ export function ConnectionForm(props: ConnectionFormProps) {
                 >
                     <span>{isConnecting ? "Connecting" : "Connect"}</span>
 
-                    {isConnecting && (
-                        <div className="loading-dots"><span className="loading-dots-placeholder">...</span></div>
-                    )}
+                    {isConnecting && <LoadingDots />}
                 </button>
             </div>
         </form>

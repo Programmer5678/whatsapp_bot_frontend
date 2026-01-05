@@ -36,3 +36,8 @@ button {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
+
+
+input[type="date"]::-webkit-calendar-picker-indicator, input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9); /* or hue-rotate(), brightness(), etc */
+}

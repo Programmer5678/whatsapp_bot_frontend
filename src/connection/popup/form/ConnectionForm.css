@@ -23,27 +23,3 @@
 
 
 
-.loading-dots{
-    position:relative;
-}
-
-.loading-dots-placeholder{
-    visibility:hidden;
-}
-
-.loading-dots::after{ 
-
-  position:absolute;
-  inset:0;
-  text-align: left;
-  content : "...";
-  animation: dots 3s linear infinite;
-
-}
-
-@keyframes dots {
-  0%   { content: ""; }
-  33%  { content: "."; }
-  66%  { content: ".."; }
-  100% { content: "..."; }
-}
