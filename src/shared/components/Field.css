@@ -3,10 +3,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  font-size: var(--font-mdl);
 }
 
 .field_span {
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 /* Inputs are visually consistent but still native */
