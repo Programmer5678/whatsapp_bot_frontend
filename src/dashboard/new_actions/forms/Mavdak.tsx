@@ -3,17 +3,49 @@ import './Mavdak.css';
 import { Field } from '../../../shared/components/Field';
 import { api } from '../../../shared/api/client';
 import { MavdakRequestModel } from '../../../shared/api/types';
-import { ActionForm } from '../ActionForm';
+import { ActionForm } from '../shared/ActionForm';
 import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
 
 interface MavdakProps {
+    /**
+     * Indicates whether any action request is currently running.
+     * Owned by NewActions so the entire actions area can be disabled.
+     */
     isConnecting: boolean;
+
+    /**
+     * Setter passed down from NewActions.
+     * Used to toggle global interactivity while a request is running.
+     */
     setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+/**
+ * Mavdak
+ *
+ * This component represents the "Create Mavdak" action form.
+ * It is responsible for:
+ * - Managing mavdak-specific form state
+ * - Handling user input
+ * - Submitting the request to the API
+ * - Reporting success / failure back to the UI
+ */
 export function Mavdak(props: MavdakProps) {
+    /**
+     * Result of the last submit attempt.
+     *
+     * - null   → no request made yet
+     * - true   → request succeeded
+     * - false  → request failed
+     *
+     * Used by ActionForm to show success/error messages.
+     */
     const [responseSuccess, setResponseSuccess] = useState<boolean | null>(null);
 
+    /**
+     * Local form state for the mavdak action.
+     * All inputs update this object via handleInputChange.
+     */
     const [form, setForm] = useState({
         base_date: '',
         deadline_mavdak_list: '',
@@ -22,6 +54,17 @@ export function Mavdak(props: MavdakProps) {
         group_participants: '',
     });
 
+    /**
+     * Handles form submission.
+     *
+     * Flow:
+     * 1. Set isConnecting = true to make the entire NewActions area non-interactive
+     *    and switch the submit button to a loading state.
+     * 2. Convert the local form state into the API request model.
+     * 3. Send the request asynchronously.
+     * 4. Set responseSuccess to true or false based on the result.
+     * 5. Set isConnecting = false once the request finishes.
+     */
     function sendRequest(e: React.FormEvent<HTMLFormElement>) {
         props.setIsConnecting(true);
         e.preventDefault();
@@ -46,6 +89,13 @@ export function Mavdak(props: MavdakProps) {
         request();
     }
 
+    /**
+     * Handles input changes for all fields.
+     *
+     * Every input calls this function on change.
+     * The function updates the corresponding field in the form state,
+     * keeping the entire form object in sync with user input.
+     */
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         const { name, value } = e.target;

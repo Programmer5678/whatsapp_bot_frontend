@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ConnectionHeader } from '../connection/header/ConnectionHeader';
 import { ConnectionPopUp } from '../connection/popup/ConnectionPopUp';
-import { NewActions } from './action_form/shared/NewActions';
+import { NewActions } from './new_actions/NewActions';
 import './Dashboard.css';
 
 export function Dashboard() {
