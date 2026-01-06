@@ -3,6 +3,8 @@ import './NewActions.css';
 import { warnTimeZone } from '../../shared/utils/timezone';
 import { Mavdak } from './forms/Mavdak';
 import { Raf0 } from './forms/Raf0';
+import { Hakhana } from './forms/Hakhana';
+import { VeadatKeva } from './forms/VeadatKeva';
 
 /**
  * NewActions
@@ -60,7 +62,7 @@ export function NewActions() {
             */}
             
             <div className="new-actions-grid">
-                {(["Raf0", "Mavdak", "Hakhana", "VeadatKeva"] as ActionNames[]).map((actionName) => (
+                {(["Raf0", "Mavdak", "Hakhana", "Veadat Keva"] as ActionNames[]).map((actionName) => (
                     <button
                         key={actionName}
                         className={`action-button ${selectedAction === actionName ? "primary" : "default"}`}
@@ -92,6 +94,20 @@ export function NewActions() {
 
                 <div style={selectedAction != "Mavdak" ? { display: "none" } : {}}>
                     <Mavdak
+                        isConnecting={isConnecting}
+                        setIsConnecting={setIsConnecting}
+                    />
+                </div>
+
+                <div style={selectedAction != "Hakhana" ? { display: "none" } : {}}>
+                    <Hakhana
+                        isConnecting={isConnecting}
+                        setIsConnecting={setIsConnecting}
+                    />
+                </div>
+
+                <div style={selectedAction != "Veadat Keva" ? { display: "none" } : {}}>
+                    <VeadatKeva
                         isConnecting={isConnecting}
                         setIsConnecting={setIsConnecting}
                     />

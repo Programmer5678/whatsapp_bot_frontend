@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import './Mavdak.css';
 import { Field } from '../../../shared/components/Field';
 import { api } from '../../../shared/api/client';
 import { MavdakRequestModel } from '../../../shared/api/types';
 import { ActionForm } from '../shared/ActionForm';
 import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
+import { genHandleInputChange } from '../shared/genHandleInputChange';
 
 interface MavdakProps {
     /**
@@ -96,11 +96,7 @@ export function Mavdak(props: MavdakProps) {
      * The function updates the corresponding field in the form state,
      * keeping the entire form object in sync with user input.
      */
-    function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-        e.preventDefault();
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    }
+    const handleInputChange = genHandleInputChange(setForm);
 
     return (
         <ActionForm
@@ -109,7 +105,7 @@ export function Mavdak(props: MavdakProps) {
             responseSuccess={responseSuccess}
             header="Create Mavdak"
         >
-            <div className="mavdak-grid">
+            <div className="action-form-grid">
                 <Field label="Base Date">
                     <input
                         type="date"

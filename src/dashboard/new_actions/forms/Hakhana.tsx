@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Field } from '../../../shared/components/Field';
 import { api } from '../../../shared/api/client';
-import { Raf0RequestModel } from '../../../shared/api/types';
+import { HakhanaRequestModel, Raf0RequestModel } from '../../../shared/api/types';
 import { ActionForm } from '../shared/ActionForm';
 import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
 import { genHandleInputChange } from '../shared/genHandleInputChange';
 
-interface Raf0Props {
+interface HakhanaProps {
     /**
      * Indicates whether any action request is currently running.
      * Owned by NewActions so the entire actions area can be disabled.
@@ -20,17 +20,8 @@ interface Raf0Props {
     setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-/**
- * Mavdak
- *
- * This component represents the "Create Mavdak" action form.
- * It is responsible for:
- * - Managing mavdak-specific form state
- * - Handling user input
- * - Submitting the request to the API
- * - Reporting success / failure back to the UI
- */
-export function Raf0(props: Raf0Props) {
+
+export function Hakhana(props: HakhanaProps) {
     /**
      * Result of the last submit attempt.
      *
@@ -48,6 +39,7 @@ export function Raf0(props: Raf0Props) {
      */
     const [form, setForm] = useState({
         date: '',
+        deadline: '',
         group_participants: '',
     });
 
@@ -66,14 +58,15 @@ export function Raf0(props: Raf0Props) {
         props.setIsConnecting(true);
         e.preventDefault();
 
-        const requestBody: Raf0RequestModel = {
+        const requestBody: HakhanaRequestModel = {
             ...form,
             group_participants: form.group_participants.split(','),
+            deadline: form.deadline + getTimeZoneSuffix(),
         };
 
         async function request() {
             try {
-                await api.createRaf0(requestBody);
+                await api.createHakhana(requestBody);
                 setResponseSuccess(true);
             } catch {
                 setResponseSuccess(false);
@@ -84,6 +77,7 @@ export function Raf0(props: Raf0Props) {
 
         request();
     }
+
 
     /**
      * Handles input changes for all fields.
@@ -99,17 +93,28 @@ export function Raf0(props: Raf0Props) {
             onSubmit={sendRequest}
             isConnecting={props.isConnecting}
             responseSuccess={responseSuccess}
-            header={"Create Raf0"}
+            header={"Create Hakhana"}
         >
 
-            <Field label="Date">
-                <input
-                    type="date"
-                    name="date"
-                    onChange={handleInputChange}
-                    required
-                />
-            </Field>
+            <div className="action-form-grid">
+                <Field label="Date">
+                    <input
+                        type="date"
+                        name="date"
+                        onChange={handleInputChange}
+                        required
+                    />
+                </Field>
+
+                <Field label="Deadline">
+                    <input
+                        type="datetime-local"
+                        name="deadline"
+                        onChange={handleInputChange}
+                        required
+                    />
+                </Field>
+            </div>
 
             <Field label="Participants (comma separated phone numbers)">
                 <input
