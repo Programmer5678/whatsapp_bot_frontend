@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './NewActions.css';
 import { warnTimeZone } from '../../shared/utils/timezone';
 import { Mavdak } from './forms/Mavdak';
+import { Raf0 } from './forms/Raf0';
 
 /**
  * NewActions
@@ -17,6 +18,10 @@ import { Mavdak } from './forms/Mavdak';
  * This prevents the user from interacting with other actions or inputs
  * during an in-flight API request.
  */
+
+type ActionNames = null | "Raf0" | "Mavdak" | "Hakhana" | "Veadat Keva"
+
+
 export function NewActions() {
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
@@ -27,6 +32,9 @@ export function NewActions() {
     useEffect(() => {
         warnTimeZone();
     }, []);
+
+    const [selectedAction, setSelectedAction] =
+        useState<ActionNames>(null);
 
     return (
         <div className={isConnecting ? 'new-actions disabled' : 'new-actions'}>
@@ -50,12 +58,19 @@ export function NewActions() {
                 These buttons are used to select which action form is shown
                 (e.g. Mavdak, Raf0, Hakhana, etc.)
             */}
+            
             <div className="new-actions-grid">
-                <button className="action-button default">Raf0</button>
-                <button className="action-button default">Mavdak</button>
-                <button className="action-button default">Hakhana</button>
-                <button className="action-button default">Veadat Keva</button>
+                {(["Raf0", "Mavdak", "Hakhana", "VeadatKeva"] as ActionNames[]).map((actionName) => (
+                    <button
+                        key={actionName}
+                        className={`action-button ${selectedAction === actionName ? "primary" : "default"}`}
+                        onClick={() => setSelectedAction(actionName)}
+                    >
+                        {actionName}
+                    </button>
+                ))}
             </div>
+
 
             <div className="new-actions-spacer-md" />
 
@@ -65,10 +80,31 @@ export function NewActions() {
                 Additional action forms will be conditionally rendered here
                 based on the selected action.
             */}
-            <Mavdak
-                isConnecting={isConnecting}
-                setIsConnecting={setIsConnecting}
-            />
+
+            <>
+
+                <div style={selectedAction != "Raf0" ? { display: "none" } : {}}>
+                    <Raf0
+                        isConnecting={isConnecting}
+                        setIsConnecting={setIsConnecting}
+                    />
+                </div>
+
+                <div style={selectedAction != "Mavdak" ? { display: "none" } : {}}>
+                    <Mavdak
+                        isConnecting={isConnecting}
+                        setIsConnecting={setIsConnecting}
+                    />
+                </div>
+
+                {/* <div style={selectedAction != "Mavdak" ? {display:"none"} : {} }>
+                <Mavdak
+                    isConnecting={isConnecting}
+                    setIsConnecting={setIsConnecting}
+                />
+            </div>     */}
+
+            </>
         </div>
     );
 }

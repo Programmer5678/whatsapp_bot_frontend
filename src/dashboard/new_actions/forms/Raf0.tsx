@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import './Mavdak.css';
 import { Field } from '../../../shared/components/Field';
 import { api } from '../../../shared/api/client';
-import { MavdakRequestModel } from '../../../shared/api/types';
+import { Raf0RequestModel } from '../../../shared/api/types';
 import { ActionForm } from '../shared/ActionForm';
 import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
 
-interface MavdakProps {
+interface Raf0Props {
     /**
      * Indicates whether any action request is currently running.
      * Owned by NewActions so the entire actions area can be disabled.
@@ -30,7 +30,7 @@ interface MavdakProps {
  * - Submitting the request to the API
  * - Reporting success / failure back to the UI
  */
-export function Mavdak(props: MavdakProps) {
+export function Raf0(props: Raf0Props) {
     /**
      * Result of the last submit attempt.
      *
@@ -47,10 +47,7 @@ export function Mavdak(props: MavdakProps) {
      * All inputs update this object via handleInputChange.
      */
     const [form, setForm] = useState({
-        base_date: '',
-        deadline_mavdak_list: '',
-        forms_link: '',
-        iluzei_reaionot_mador_mavdak: '',
+        date: '',
         group_participants: '',
     });
 
@@ -69,15 +66,14 @@ export function Mavdak(props: MavdakProps) {
         props.setIsConnecting(true);
         e.preventDefault();
 
-        const requestBody: MavdakRequestModel = {
+        const requestBody: Raf0RequestModel = {
             ...form,
             group_participants: form.group_participants.split(','),
-            deadline_mavdak_list: form.deadline_mavdak_list + getTimeZoneSuffix(),
         };
 
         async function request() {
             try {
-                await api.createMavdak(requestBody);
+                await api.createRaf0(requestBody);
                 setResponseSuccess(true);
             } catch {
                 setResponseSuccess(false);
@@ -107,45 +103,16 @@ export function Mavdak(props: MavdakProps) {
             onSubmit={sendRequest}
             isConnecting={props.isConnecting}
             responseSuccess={responseSuccess}
-            header="Create Mavdak"
+            header={"Create Raf0"}
         >
-            <div className="mavdak-grid">
-                <Field label="Base Date">
+
+            <Field label="Date">
                     <input
                         type="date"
-                        name="base_date"
+                        name="date"
                         onChange={handleInputChange}
                         required
                     />
-                </Field>
-
-                <Field label="Deadline">
-                    <input
-                        type="datetime-local"
-                        name="deadline_mavdak_list"
-                        onChange={handleInputChange}
-                        required
-                    />
-                </Field>
-            </div>
-
-            <Field label="Forms Link">
-                <input
-                    type="url"
-                    name="forms_link"
-                    placeholder="https://..."
-                    onChange={handleInputChange}
-                    required
-                />
-            </Field>
-
-            <Field label="Iluzei Reaionot">
-                <input
-                    name="iluzei_reaionot_mador_mavdak"
-                    placeholder="message of iluzei reaionot"
-                    onChange={handleInputChange}
-                    required
-                />
             </Field>
 
             <Field label="Participants (comma separated phone numbers)">
@@ -157,6 +124,7 @@ export function Mavdak(props: MavdakProps) {
                     required
                 />
             </Field>
+            
         </ActionForm>
     );
 }

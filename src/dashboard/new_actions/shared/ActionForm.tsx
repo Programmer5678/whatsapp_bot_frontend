@@ -40,6 +40,8 @@ interface ActionFormProps {
      * This value is controlled by the onSubmit function.
      */
     responseSuccess: boolean | null;
+
+    header: string; 
 }
 
 export function ActionForm(props: ActionFormProps) {
@@ -52,7 +54,7 @@ export function ActionForm(props: ActionFormProps) {
             <div className="action-form__header">
                 <div className="action-form__title-row">
                     <span className="action-form__plus">+</span>
-                    <span className="action-form__title">Create Mavdak</span>
+                    <span className="action-form__title">{props.header}</span>
                 </div>
 
                 <hr className="action-form__divider" />
@@ -80,7 +82,7 @@ export function ActionForm(props: ActionFormProps) {
             */}
             {props.responseSuccess === true && (
                 <div className="action-form__success">
-                    Successfully created mavdak action!
+                    Successfully created action!
                 </div>
             )}
 
