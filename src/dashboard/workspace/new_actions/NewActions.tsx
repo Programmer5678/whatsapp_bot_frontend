@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './NewActions.css';
-import { warnTimeZone } from '../../shared/utils/timezone';
+import { warnTimeZone } from '../../../shared/utils/timezone';
 import { Mavdak } from './forms/Mavdak';
 import { Raf0 } from './forms/Raf0';
 import { Hakhana } from './forms/Hakhana';

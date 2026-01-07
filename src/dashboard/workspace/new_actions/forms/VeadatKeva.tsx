@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Field } from '../../../shared/components/Field';
-import { api } from '../../../shared/api/client';
-import { HakhanaRequestModel, Raf0RequestModel, VeadatKevaRequestModel } from '../../../shared/api/types';
+import { Field } from '../../../../shared/components/Field';
+import { api } from '../../../../shared/api/client';
+import { HakhanaRequestModel, Raf0RequestModel, VeadatKevaRequestModel } from '../../../../shared/api/types';
 import { ActionForm } from '../shared/ActionForm';
-import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
+import { getTimeZoneSuffix } from '../../../../shared/utils/timezone';
 import { genHandleInputChange } from '../shared/genHandleInputChange';
 
 interface VeadatKevaProps {

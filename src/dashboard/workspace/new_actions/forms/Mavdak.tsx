@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Field } from '../../../shared/components/Field';
-import { api } from '../../../shared/api/client';
-import { HakhanaRequestModel, Raf0RequestModel } from '../../../shared/api/types';
+import { Field } from '../../../../shared/components/Field';
+import { api } from '../../../../shared/api/client';
+import { MavdakRequestModel } from '../../../../shared/api/types';
 import { ActionForm } from '../shared/ActionForm';
-import { getTimeZoneSuffix } from '../../../shared/utils/timezone';
+import { getTimeZoneSuffix } from '../../../../shared/utils/timezone';
 import { genHandleInputChange } from '../shared/genHandleInputChange';
 
-interface HakhanaProps {
+interface MavdakProps {
     /**
      * Indicates whether any action request is currently running.
      * Owned by NewActions so the entire actions area can be disabled.
@@ -20,8 +20,17 @@ interface HakhanaProps {
     setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-
-export function Hakhana(props: HakhanaProps) {
+/**
+ * Mavdak
+ *
+ * This component represents the "Create Mavdak" action form.
+ * It is responsible for:
+ * - Managing mavdak-specific form state
+ * - Handling user input
+ * - Submitting the request to the API
+ * - Reporting success / failure back to the UI
+ */
+export function Mavdak(props: MavdakProps) {
     /**
      * Result of the last submit attempt.
      *
@@ -38,8 +47,10 @@ export function Hakhana(props: HakhanaProps) {
      * All inputs update this object via handleInputChange.
      */
     const [form, setForm] = useState({
-        date: '',
-        deadline: '',
+        base_date: '',
+        deadline_mavdak_list: '',
+        forms_link: '',
+        iluzei_reaionot_mador_mavdak: '',
         group_participants: '',
     });
 
@@ -58,15 +69,15 @@ export function Hakhana(props: HakhanaProps) {
         props.setIsConnecting(true);
         e.preventDefault();
 
-        const requestBody: HakhanaRequestModel = {
+        const requestBody: MavdakRequestModel = {
             ...form,
             group_participants: form.group_participants.split(','),
-            deadline: form.deadline + getTimeZoneSuffix(),
+            deadline_mavdak_list: form.deadline_mavdak_list + getTimeZoneSuffix(),
         };
 
         async function request() {
             try {
-                await api.createHakhana(requestBody);
+                await api.createMavdak(requestBody);
                 setResponseSuccess(true);
             } catch {
                 setResponseSuccess(false);
@@ -77,7 +88,6 @@ export function Hakhana(props: HakhanaProps) {
 
         request();
     }
-
 
     /**
      * Handles input changes for all fields.
@@ -93,14 +103,13 @@ export function Hakhana(props: HakhanaProps) {
             onSubmit={sendRequest}
             isConnecting={props.isConnecting}
             responseSuccess={responseSuccess}
-            header={"Create Hakhana"}
+            header="Create Mavdak"
         >
-
             <div className="action-form-grid">
-                <Field label="Date">
+                <Field label="Base Date">
                     <input
                         type="date"
-                        name="date"
+                        name="base_date"
                         onChange={handleInputChange}
                         required
                     />
@@ -109,12 +118,31 @@ export function Hakhana(props: HakhanaProps) {
                 <Field label="Deadline">
                     <input
                         type="datetime-local"
-                        name="deadline"
+                        name="deadline_mavdak_list"
                         onChange={handleInputChange}
                         required
                     />
                 </Field>
             </div>
+
+            <Field label="Forms Link">
+                <input
+                    type="url"
+                    name="forms_link"
+                    placeholder="https://..."
+                    onChange={handleInputChange}
+                    required
+                />
+            </Field>
+
+            <Field label="Iluzei Reaionot">
+                <input
+                    name="iluzei_reaionot_mador_mavdak"
+                    placeholder="message of iluzei reaionot"
+                    onChange={handleInputChange}
+                    required
+                />
+            </Field>
 
             <Field label="Participants (comma separated phone numbers)">
                 <input
@@ -125,7 +153,6 @@ export function Hakhana(props: HakhanaProps) {
                     required
                 />
             </Field>
-
         </ActionForm>
     );
 }

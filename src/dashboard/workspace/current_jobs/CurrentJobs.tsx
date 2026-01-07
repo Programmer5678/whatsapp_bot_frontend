@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { JobTreeResponse } from '../../shared/api/types';
-import { api } from '../../shared/api/client';
+import { JobTreeResponse } from '../../../shared/api/types';
+import { api } from '../../../shared/api/client';
 import './CurrentJobs.css';
 
 /**

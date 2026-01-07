@@ -1,6 +1,6 @@
 import React from 'react';
 import './ActionForm.css';
-import { LoadingDots } from '../../../shared/components/LoadingDots';
+import { LoadingDots } from '../../../../shared/components/LoadingDots';
 
 interface ActionFormProps {
     /**
