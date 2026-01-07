@@ -8,10 +8,10 @@ import "../../shared/styles/ActionButton.css";
 
 
 export interface ConnectionHeaderProps {
-  openConnectionPopUp : () => void;
+  openConnectionPopUp: () => void;
 }
 
-export function ConnectionHeader(props : ConnectionHeaderProps) {
+export function ConnectionHeader(props: ConnectionHeaderProps) {
   // Last known connection status returned from the API
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatusType>("evolution_connection_error");
@@ -109,7 +109,7 @@ export function ConnectionHeader(props : ConnectionHeaderProps) {
             &#x21bb;
           </span>
           <span>Refresh</span>
-          
+
         </button>
 
         {/* Future reconnect action */}
@@ -121,9 +121,8 @@ export function ConnectionHeader(props : ConnectionHeaderProps) {
             &#x1F4F1;
           </span>
           <span>Reconnect</span>
-          
-        </button>
 
+        </button>
 
 
       </div>

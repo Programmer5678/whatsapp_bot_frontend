@@ -1,0 +1,28 @@
+.workspace.disabled {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.workspace-spacer-lg {
+    height: var(--spacing-lg);
+}
+
+.workspace-spacer-md {
+    height: var(--spacing-md);
+}
+
+.workspace-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.workspace-title {
+    font-size: var(--font-lg);
+    font-weight: bold;
+}
+
+.workspace-subtitle {
+    font-size: var(--font-mdl);
+    color: var(--text-tertiary);
+}

@@ -1,0 +1,31 @@
+/**
+ * Root container for the Current Jobs view
+ */
+.current-jobs {
+  transition: opacity 0.2s ease;
+}
+
+/**
+ * Loading state
+ *
+ * Applied while jobs are being refreshed:
+ * - Reduces opacity for visual feedback
+ * - Disables pointer events to prevent interaction
+ */
+.current-jobs--loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/**
+ * Header layout
+ *
+ * Positions:
+ * - Title/subtitle on the left
+ * - Refresh button on the right
+ */
+.current-jobs__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

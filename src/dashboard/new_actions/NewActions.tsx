@@ -39,21 +39,21 @@ export function NewActions() {
         useState<ActionNames>(null);
 
     return (
-        <div className={isConnecting ? 'new-actions disabled' : 'new-actions'}>
+        <div className={isConnecting ? 'workspace disabled' : 'workspace'}>
             {/* 
                 Header section
                 Provides context for the user about creating new WhatsApp actions
             */}
-            <div className="new-actions-header">
-                <div className="new-actions-title">
+            <div className="workspace-header">
+                <div className="workspace-title">
                     Create New Action
                 </div>
-                <div className="new-actions-subtitle">
+                <div className="workspace-subtitle">
                     Select an action type to configure and launch automation.
                 </div>
             </div>
 
-            <div className="new-actions-spacer-lg" />
+            <div className="workspace-spacer-lg" />
 
             {/*
                 Action selection buttons
@@ -74,7 +74,7 @@ export function NewActions() {
             </div>
 
 
-            <div className="new-actions-spacer-md" />
+            <div className="workspace-spacer-md" />
 
             {/*
                 Action form
@@ -112,13 +112,6 @@ export function NewActions() {
                         setIsConnecting={setIsConnecting}
                     />
                 </div>
-
-                {/* <div style={selectedAction != "Mavdak" ? {display:"none"} : {} }>
-                <Mavdak
-                    isConnecting={isConnecting}
-                    setIsConnecting={setIsConnecting}
-                />
-            </div>     */}
 
             </>
         </div>

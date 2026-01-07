@@ -3,6 +3,9 @@ import { ConnectionHeader } from '../connection/header/ConnectionHeader';
 import { ConnectionPopUp } from '../connection/popup/ConnectionPopUp';
 import { NewActions } from './new_actions/NewActions';
 import './Dashboard.css';
+import './workspace/workspace.css'
+
+import { CurrentJobs } from './current_jobs/CurrentJobs';
 
 export function Dashboard() {
     const [isConnectionPopUpOpen, setIsConnectionPopUpOpen] = useState<boolean>(false);
@@ -14,6 +17,7 @@ export function Dashboard() {
     function openConnectionPopUp() {
         setIsConnectionPopUpOpen(true);
     }
+
 
     return (
         <div style={{ position: 'relative', height: "100%" }}>
@@ -52,8 +56,10 @@ export function Dashboard() {
                 <div style={{ padding: "0 var(--spacing-xxl)", width: "100%" }}>
                     {/* sharedWorkspace */}
                     <div className="sharedWorkspace">
-                        {/* New Actions view */}
-                        <NewActions />
+
+                        {/* <NewActions /> */}
+                        <CurrentJobs />
+
                     </div>
                 </div>
             </div>
