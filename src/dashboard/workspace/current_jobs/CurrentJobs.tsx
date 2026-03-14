@@ -3,6 +3,56 @@ import { JobTreeResponse } from '../../../shared/api/types';
 import { api } from '../../../shared/api/client';
 import './CurrentJobs.css';
 
+
+
+type Node = {
+    id: string;
+    children: Node[];
+}
+
+function stringifyTree(tree: Node): string {
+  return `{ id: ${tree.id}, children: [\n${tree.children
+    .map(node => stringifyTree(node))
+    .join(",\n")}\n] }`;
+}
+
+function convertJobsToNodes(jobs: JobTreeResponse) {
+    const root: Node = {
+        id: "root",
+        children: []
+    }
+
+    jobs.jobs.forEach(job => {
+        const path: string[] = job.id.split("/");
+        let currentNode: Node = root;
+
+        path.forEach(step => {
+
+            const childNode: (Node | undefined) = currentNode.children.find(node => node.id === step);
+
+            if (childNode === undefined) {
+                
+                const newNode : Node = {
+                    id: step,
+                    children: []
+                }
+
+                currentNode.children.push(newNode);
+
+                currentNode = newNode;
+            }
+
+            else {
+                currentNode = childNode;
+            }
+
+        })
+    })
+
+    return root;
+}
+
+
 /**
  * CurrentJobs
  *
@@ -37,7 +87,7 @@ export function CurrentJobs() {
      */
     const [jobs, setJobs] = useState<JobTreeResponse | 'error' | null>(null);
 
-    useEffect( fetchAndUpdateJobs , []); /* fetch jobs at mount */
+    useEffect(fetchAndUpdateJobs, []); /* fetch jobs at mount */
 
     /**
      * fetchAndUpdateJobs
@@ -120,9 +170,8 @@ export function CurrentJobs() {
                 >
                     {/* Refresh icon (rotates while loading) */}
                     <span
-                        className={`action-button__icon ${
-                            isLoading ? 'rotate' : ''
-                        }`}
+                        className={`action-button__icon ${isLoading ? 'rotate' : ''
+                            }`}
                     >
                         &#x21bb;
                     </span>
@@ -138,14 +187,15 @@ export function CurrentJobs() {
               - If jobs === 'error' → show error message
               - Otherwise → show the list of jobs
             */}
-            {jobs === 'error' ? (
+            {jobs === 'error' &&  (
                 <div className="action-form__error">
                     Failed to fetch
                 </div>
-            ) : (
+            ) }
+
+            { jobs != 'error' && jobs != null && (
                 <div>
-                    {/* Temporary jobs rendering (raw JSON) */}
-                    Jobs: {JSON.stringify(jobs)}
+                    Jobs: {stringifyTree(convertJobsToNodes(jobs))}
                 </div>
             )}
 
